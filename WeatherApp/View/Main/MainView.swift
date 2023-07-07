@@ -9,41 +9,44 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject var service: WeatherService
-    
-    @State private var currentTapType = TapType.Daily
-    
+    @State private var currentTapType = TapType.Hourly
     
     var body: some View {
-        NavigationView {
-            VStack {
+        NavigationStack {
             
-                CurrentWeatherView(model: service.currentWeather)
-                
-                CurrentWeatherDetailView(model: service.currentWeather)
-                .padding(.top, 64)
-                
-                GeometryReader { reader in
-                    VStack(spacing: 16.0) {
+            GeometryReader { reader in
+                VStack(alignment: .center ,spacing: 72) {
+                    
+                    CurrentWeatherView()
+                    
+                    CurrentWeatherDetailView()
+        
+                    VStack(spacing: 24) {
                         MainButtonMenu(currentTapType: $currentTapType)
                         
                         MoreWeatherListView(currentTapType: $currentTapType)
                     }
-                }
-                .padding(.top, 24)
+                    .frame(height: 200)
 
-                
-                
+                }
+                .frame(height: reader.size.height)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack {
-                        Text(service.currentLocation[0] ?? " ")
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(Color(hex: "3A3A3A"))
-                        Text(service.currentLocation[1] ?? "")
-                            .font(.system(size: 16, weight: .light))
-                            .foregroundColor(Color(hex: "4D4D4D"))
+                        if service.currentLocation.count == 1 {
+                            Text(service.currentLocation[0] ?? " ")
+                                .font(.system(size: 24, weight: .bold))
+                                .foregroundColor(Color(hex: "3A3A3A"))
+                        } else {
+                            Text(service.currentLocation[0] ?? " ")
+                                .font(.system(size: 20, weight: .bold))
+                                .foregroundColor(Color(hex: "3A3A3A"))
+                            Text(service.currentLocation[1] ?? "")
+                                .font(.system(size: 16, weight: .light))
+                                .foregroundColor(Color(hex: "4D4D4D"))
+                        }
                     }
                 }
                 
@@ -63,7 +66,7 @@ struct MainView: View {
                         Image("Location")
                     }
                 }
-
+                
             }
             .background {
                 Color("backgroundColor")
@@ -73,18 +76,17 @@ struct MainView: View {
                 service.fetch()
             }
         }
-        
     }
 }
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
+            .environmentObject(WeatherService.preview)
             .preferredColorScheme(.light)
-            .environmentObject(WeatherService.preview)
         MainView()
-            .preferredColorScheme(.dark)
             .environmentObject(WeatherService.preview)
+            .preferredColorScheme(.dark)
     }
 }
 

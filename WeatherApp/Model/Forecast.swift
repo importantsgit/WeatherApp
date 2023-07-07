@@ -13,11 +13,8 @@ struct Forecast: Identifiable {
     let date: String
     let time: String
     let icon: String
-    let weather: String
+    let day: String
     let temperature: String
-    let minTemperature: String
-    let maxTemperature: String
-    let forecastedDate: Date
 }
 
 extension Forecast {
@@ -25,7 +22,21 @@ extension Forecast {
         return (0..<10).map {
             let dt = Date.now.addingTimeInterval(TimeInterval($0 * 3600 * 24))
             
-            return Forecast(date: dt.formatted(Date.FormatStyle.dateTime.month().hour()), time: dt.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute()), icon: "01d", weather: "맑음", temperature: Double.randomTemperatureString, minTemperature: Double.randomTemperatureString, maxTemperature: Double.randomTemperatureString, forecastedDate: .now)
+            return Forecast(date: dt.formatted(Date.FormatStyle.dateTime.month().hour()), time: dt.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute()), icon: "01d",day: "일", temperature: Double.randomTemperatureString)
         }
+    }
+    
+    init?(data: CodableForecast.ListItem) {
+        let dt = Date(timeIntervalSince1970: TimeInterval(data.dt))
+        
+        date = dt.formatted(Date.FormatStyle.dateTime.month().day())
+        time = dt.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute())
+        day = dt.formatted(Date.FormatStyle.dateTime.weekday())
+        
+        guard let weatherData = data.weather.first else { return nil }
+        
+        icon = weatherData.icon
+        
+        temperature = data.main.temp.temperatureString
     }
 }

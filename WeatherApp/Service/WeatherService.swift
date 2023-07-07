@@ -16,15 +16,17 @@ class WeatherService: NSObject/*delegate 상속받아야 됨*/, ObservableObject
     @Published var currentLocation: [String?]
     
     @Published var currentWeather: CurrentWeather?
-    @Published var dailyWeather: DailyWeather?
-    @Published var hourlyWeather: HourlyWeather?
-    @Published var forecastList: [Forecast]?
+    @Published var forecastHourlyList: [Forecast]?
+    @Published var forecastDailyList: [Forecast]?
     
-    @Published var lassError: String?
+    @Published var lastError: String?
+    
+    @Published var isFetched: Bool
     
     let isPreviewService: Bool
     
     init(preview: Bool = false) {
+        isFetched = false
         isPreviewService = preview
         
         locationManager = CLLocationManager()
@@ -39,7 +41,8 @@ class WeatherService: NSObject/*delegate 상속받아야 됨*/, ObservableObject
     static var preview: WeatherService {
         let service = WeatherService(preview: true)
         service.currentWeather = CurrentWeather.preview
-        service.forecastList = Forecast.preview
+        service.forecastHourlyList = Forecast.preview
+        service.forecastDailyList = Forecast.preview
         
         return service
     }
@@ -54,10 +57,11 @@ class WeatherService: NSObject/*delegate 상속받아야 됨*/, ObservableObject
             locationManager.requestLocation()
             
         case .denied, .restricted:
-            lassError = "위치 서비스 사용 권한이 없습니다."
-        
+            lastError = "위치 서비스 사용 권한이 없습니다."
+            isFetched = false
         default:
-            lassError = "알 수 없는 오류가 발생했습니다."
+            lastError = "알 수 없는 오류가 발생했습니다."
+            isFetched = false
         }
     }
 }

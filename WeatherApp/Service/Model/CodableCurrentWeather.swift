@@ -7,8 +7,34 @@
 
 import Foundation
 
+
 // MARK: - Welcome
 struct CodableCurrentWeather: Codable {
+    let weather: [Weather]
+    let main: MainCurrentWeather
+    let dt: Int
+    let sys: Sys
+}
+
+// MARK: - Main
+struct MainCurrentWeather: Codable {
+    let temp, feelsLike: Double
+    let humidity: Int
+
+    enum CodingKeys: String, CodingKey {
+        case temp
+        case feelsLike = "feels_like"
+        case humidity
+    }
+}
+
+// MARK: - Sys
+struct Sys: Codable {
+    let sunrise, sunset: Int
+}
+
+// MARK: - Welcome
+struct CodableForeCast: Codable {
     let cod: String
     let message, cnt: Int
     let list: [WeatherList]
@@ -25,12 +51,12 @@ struct City: Codable {
 // MARK: - List
 struct WeatherList: Codable {
     let dt: Int
-    let main: MainWeather
+    let main: MainForcast
     let weather: [Weather]
 }
 
 // MARK: - Main
-struct MainWeather: Codable {
+struct MainForcast: Codable {
     let temp, feelsLike: Double
     let pressure, humidity: Int
 
@@ -45,5 +71,5 @@ struct MainWeather: Codable {
 // MARK: - Weather
 struct Weather: Codable {
     let id: Int
-    let description, icon: String
+    let main, description, icon: String
 }

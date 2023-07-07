@@ -16,6 +16,7 @@ struct MainButtonMenu: View {
     @Binding var currentTapType: TapType
     
     var body: some View {
+        
         HStack {
             Spacer()
             

@@ -8,7 +8,6 @@
 import Foundation
 
 struct CodableCurrentAirPollution: Codable {
-    let coord: [Int]
     let list: [List]
 }
 
@@ -21,18 +20,6 @@ struct List: Codable {
 // MARK: - Main
 struct Main: Codable {
     let aqi: Int
-    
-    var description: String {
-        var str = ""
-        switch aqi {
-        case 1: str = "Good"
-        case 2: str = "Fair"
-        case 3: str = "Moderate"
-        case 4: str = "Poor"
-        default: str = "Very Poor"
-        }
-        return str
-    }
 }
 
 

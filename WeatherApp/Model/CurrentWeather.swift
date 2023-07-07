@@ -28,24 +28,33 @@ extension CurrentWeather {
     }
     
     init?(weatherData: CodableCurrentWeather, pollutionData: CodableCurrentAirPollution) {
-        guard let weatherInfo = weatherData.list.first,
-              let pollutionInfo = pollutionData.list.first?.main.description else { return nil }
+        guard let weatherInfo = weatherData.weather.first,
+              let pollutionLevel = pollutionData.list.first else { return nil }
         
         icon = weatherInfo.icon
         weather = weatherInfo.description
-        temperature = weatherData.current.temp.temperatureString
-        feelsLike = weatherData.current.feelsLike.temperatureString
-        humidity = "\(weatherData.current.humidity)"
+        temperature = weatherData.main.temp.temperatureString
+        feelsLike = weatherData.main.feelsLike.temperatureString
+        humidity = "\(weatherData.main.humidity)%"
         
-        var date = Date(timeIntervalSince1970: TimeInterval(weatherData.current.sunrise!))
+        var date = Date(timeIntervalSince1970: TimeInterval(weatherData.sys.sunrise))
         sunrise = date.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute())
         
-        date = Date(timeIntervalSince1970: TimeInterval(weatherData.current.sunset!))
+        date = Date(timeIntervalSince1970: TimeInterval(weatherData.sys.sunset))
         sunset = date.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute())
         
-        airPollution = pollutionInfo
+        var str = ""
+        switch pollutionLevel.main.aqi {
+        case 1: str = "Good"
+        case 2: str = "Fair"
+        case 3: str = "Moderate"
+        case 4: str = "Poor"
+        default: str = "Very Poor"
+        }
+
+        airPollution = str
         
-        forecastedDate = Date(timeIntervalSince1970: TimeInterval(weatherData.current.dt))
+        forecastedDate = Date(timeIntervalSince1970: TimeInterval(weatherData.dt))
         description = weatherInfo.description
     }
 }

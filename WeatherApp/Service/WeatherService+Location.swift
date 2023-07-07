@@ -14,16 +14,18 @@ extension WeatherService: CLLocationManagerDelegate {
     private func updateAddress(from location: CLLocation) async throws -> [String] {
         let geocoder = CLGeocoder()
         // 지리적 좌표와 지명 간의 변환을 위한 인터페이스
+        
+        // 여기에서 background 스레드에서 돌아가게됨
         let placemarks = try await geocoder.reverseGeocodeLocation(location, preferredLocale: Locale(identifier: "Ko_kr"))
         
         if let placemark = placemarks.first {
             if let gu = placemark.locality, let dong = placemark.subLocality {
                 return ["\(gu)", "\(dong)"]
             } else {
-                return ["\(placemark.name ?? "알 수 없음")", "" ]
+                return ["\(placemark.name ?? "알 수 없음")"]
             }
         }
-        return ["알 수 없음", ""]
+        return ["알 수 없음"]
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
@@ -32,12 +34,16 @@ extension WeatherService: CLLocationManagerDelegate {
             locationManager.requestLocation()
             
         case .notDetermined:
-            lassError = "위치 서비스 사용 권한을 확인할 수 없습니다."
+            lastError = "위치 서비스 사용 권한을 확인할 수 없습니다."
+            isFetched = false
             
         case .denied, .restricted:
-            lassError = "알 수 없는 오류가 발생했습니다."
-        @unknown default:
-            fatalError()
+            lastError = "알 수 없는 오류가 발생했습니다."
+            isFetched = false
+    
+        default:
+            lastError = "알 수 없는 오류가 발생했습니다."
+            isFetched = false
         }
     }
     
@@ -45,11 +51,12 @@ extension WeatherService: CLLocationManagerDelegate {
     private func process(location: CLLocation) {
         guard !isPreviewService else { return }
         
-        Task.detached {  @MainActor [weak self] in
-            guard let self = self else {return}
+        Task{  @MainActor in
             currentLocation = try await updateAddress(from: location)
             await fetchWeather(location: location)
             //비동기 함수
+            
+            isFetched = true
         }
     }
     
@@ -64,6 +71,7 @@ extension WeatherService: CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         manager.stopUpdatingLocation()
-        lassError = error.localizedDescription
+        lastError = error.localizedDescription
+        isFetched = false
     }
 }
