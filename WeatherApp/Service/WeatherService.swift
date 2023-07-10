@@ -18,6 +18,7 @@ class WeatherService: NSObject/*delegate 상속받아야 됨*/, ObservableObject
     @Published var currentWeather: CurrentWeather?
     @Published var forecastHourlyList: [Forecast]?
     @Published var forecastDailyList: [Forecast]?
+    @Published var forecastList: [Forecast]?
     
     @Published var lastError: String?
     

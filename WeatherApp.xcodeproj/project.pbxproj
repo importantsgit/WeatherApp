@@ -49,6 +49,12 @@
 		7BF609012A57F1A400C9D998 /* WeatherEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF609002A57F1A400C9D998 /* WeatherEntryView.swift */; };
 		7BF609062A58052700C9D998 /* FileManager+SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF609052A58052700C9D998 /* FileManager+SharedContainer.swift */; };
 		7BF609072A58052700C9D998 /* FileManager+SharedContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BF609052A58052700C9D998 /* FileManager+SharedContainer.swift */; };
+		7BFB61242A5B85B80056F7D8 /* Forecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B226B7F2A554C8600D1D85F /* Forecast.swift */; };
+		7BFB61252A5B85BA0056F7D8 /* CurrentWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B226B7B2A554AC900D1D85F /* CurrentWeather.swift */; };
+		7BFB61272A5B87940056F7D8 /* CodableCurrentWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE7B5302A568A71004F1D8D /* CodableCurrentWeather.swift */; };
+		7BFB61282A5B87970056F7D8 /* CodableCurrentAirPollution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE7B5322A568E0D004F1D8D /* CodableCurrentAirPollution.swift */; };
+		7BFB61292A5B879A0056F7D8 /* CodableForecast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B0B53082A57B0F90075268F /* CodableForecast.swift */; };
+		7BFB612A2A5B8C4D0056F7D8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7B226B6B2A55480E00D1D85F /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -393,6 +399,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BFB612A2A5B8C4D0056F7D8 /* Assets.xcassets in Resources */,
 				7B0B53562A57ED870075268F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -414,7 +421,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BFB61282A5B87970056F7D8 /* CodableCurrentAirPollution.swift in Sources */,
 				7B0B53542A57ED860075268F /* WeatherAppWidget.swift in Sources */,
+				7BFB61272A5B87940056F7D8 /* CodableCurrentWeather.swift in Sources */,
 				7BF608F82A57F00000C9D998 /* Color+Utils.swift in Sources */,
 				7BF608F92A57F00000C9D998 /* Double+TemperatureString.swift in Sources */,
 				7BF608F62A57EF8200C9D998 /* WidgetData.swift in Sources */,
@@ -423,6 +432,9 @@
 				7B0B53502A57ED860075268F /* WeatherAppWidgetBundle.swift in Sources */,
 				7B0B53522A57ED860075268F /* WeatherAppWidgetLiveActivity.swift in Sources */,
 				7BF609012A57F1A400C9D998 /* WeatherEntryView.swift in Sources */,
+				7BFB61242A5B85B80056F7D8 /* Forecast.swift in Sources */,
+				7BFB61252A5B85BA0056F7D8 /* CurrentWeather.swift in Sources */,
+				7BFB61292A5B879A0056F7D8 /* CodableForecast.swift in Sources */,
 				7BF608FC2A57F06900C9D998 /* WeatherEntry.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -34,7 +34,7 @@ struct WeatherEntryView: View {
                 }
                 
                 VStack(spacing: 2) {
-                    HStack {
+                    HStack(spacing: 16) {
                         Text("습도")
                             .font(.system(size: 13, weight: .regular))
                             .foregroundColor(Color(hex: "3A3A3A"))
@@ -46,7 +46,7 @@ struct WeatherEntryView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    HStack {
+                    HStack(spacing: 16) {
                         Text("체감 온도")
                             .font(.system(size: 13, weight: .regular))
                             .foregroundColor(Color(hex: "3A3A3A"))
@@ -57,7 +57,7 @@ struct WeatherEntryView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    HStack {
+                    HStack(spacing: 16) {
                         Text("미세 먼지")
                             .font(.system(size: 13, weight: .regular))
                             .foregroundColor(Color(hex: "3A3A3A"))

@@ -27,13 +27,19 @@ extension WeatherService {
                 pollutionData: try await fetchedCurrentAirPollution
             )
             
-            forecastHourlyList = try await fetchedForecast.list[0...2].compactMap {
-                Forecast(data: $0)
+            forecastList = try await fetchedForecast.list.compactMap {
+                Forecast(forecastdata: $0)
+            }
+            let todayForcast = forecastList?[0]
+            
+            forecastHourlyList = forecastList?.filter {
+                todayForcast?.day == $0.day
             }
             
-            forecastDailyList = try await fetchedForecast.list[3...].compactMap {
-                Forecast(data: $0)
+            forecastDailyList = forecastList?.filter {
+                todayForcast?.day != $0.day
             }
+            
         } catch {
             await MainActor.run {
                 lastError = "Api 요청 실패"
@@ -48,7 +54,7 @@ extension WeatherService {
             URLQueryItem(name: "appid", value: Consts.shared.OPEN_WEATHER_API),
             URLQueryItem(name: "units", value: "metric"),
             URLQueryItem(name: "exclude", value: "hourly,daily"),
-            URLQueryItem(name: "lang", value: "kr"),
+            //URLQueryItem(name: "lang", value: "kr"),
             URLQueryItem(name: "lat", value: "\(location.coordinate.latitude)"),
             URLQueryItem(name: "lon", value: "\(location.coordinate.longitude)")
         ]

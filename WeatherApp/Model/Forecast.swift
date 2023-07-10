@@ -15,6 +15,10 @@ struct Forecast: Identifiable {
     let icon: String
     let day: String
     let temperature: String
+    let feelsLike: String
+    let humidity: String
+    let description: String
+    let forecastDate: Date
 }
 
 extension Forecast {
@@ -22,21 +26,28 @@ extension Forecast {
         return (0..<10).map {
             let dt = Date.now.addingTimeInterval(TimeInterval($0 * 3600 * 24))
             
-            return Forecast(date: dt.formatted(Date.FormatStyle.dateTime.month().hour()), time: dt.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute()), icon: "01d",day: "일", temperature: Double.randomTemperatureString)
+            return Forecast(date: dt.formatted(Date.FormatStyle.dateTime.month().hour()), time: dt.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute()), icon: "01d",day: "일", temperature: Double.randomTemperatureString, feelsLike: Double.randomTemperatureString ,humidity: Double.randomTemperatureString ,description: "Happy", forecastDate: .now)
         }
     }
     
-    init?(data: CodableForecast.ListItem) {
-        let dt = Date(timeIntervalSince1970: TimeInterval(data.dt))
+    init?(forecastdata: CodableForecast.ListItem) {
+        let dt = Date(timeIntervalSince1970: TimeInterval(forecastdata.dt))
         
         date = dt.formatted(Date.FormatStyle.dateTime.month().day())
         time = dt.formatted(Date.FormatStyle.dateTime.hour(.twoDigits(amPM: .omitted)).minute())
         day = dt.formatted(Date.FormatStyle.dateTime.weekday())
         
-        guard let weatherData = data.weather.first else { return nil }
+        guard let weatherData = forecastdata.weather.first else { return nil }
         
         icon = weatherData.icon
         
-        temperature = data.main.temp.temperatureString
+        temperature = forecastdata.main.temp.temperatureString
+        
+        feelsLike = forecastdata.main.feelsLike.temperatureString
+        humidity = "\(forecastdata.main.humidity)%"
+        
+        description = weatherData.description
+        
+        forecastDate = Date(timeIntervalSince1970: TimeInterval(forecastdata.dt))
     }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import WidgetKit
 
 extension WeatherService: CLLocationManagerDelegate {
     
@@ -31,7 +32,7 @@ extension WeatherService: CLLocationManagerDelegate {
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
         case .authorizedAlways, .authorizedWhenInUse:
-            locationManager.requestLocation()
+            locationManager.startUpdatingLocation()
             
         case .notDetermined:
             lastError = "위치 서비스 사용 권한을 확인할 수 없습니다."
@@ -56,6 +57,11 @@ extension WeatherService: CLLocationManagerDelegate {
             await fetchWeather(location: location)
             //비동기 함수
             
+            WidgetData.write(location: currentLocation.reduce("", {
+                $0 + ($1 ?? "")
+            }), currentWeather: currentWeather, forecast: forecastList)
+            WidgetCenter.shared.reloadAllTimelines()
+            
             isFetched = true
         }
     }
@@ -65,12 +71,10 @@ extension WeatherService: CLLocationManagerDelegate {
         if let location = locations.last {
             process(location: location)
         }
-        
-        manager.stopUpdatingLocation()
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        manager.stopUpdatingLocation()
+        
         lastError = error.localizedDescription
         isFetched = false
     }
