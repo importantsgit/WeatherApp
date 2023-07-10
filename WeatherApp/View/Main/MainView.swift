@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject var service: WeatherService
     @State private var currentTapType = TapType.Hourly
+    @State private var pushListView = false
     
     var body: some View {
         NavigationStack {
@@ -61,7 +62,7 @@ struct MainView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        
+                        pushListView = true
                     } label: {
                         Image("Location")
                     }
@@ -74,6 +75,9 @@ struct MainView: View {
             }
             .onAppear {
                 service.fetch()
+            }
+            .navigationDestination(isPresented: $pushListView) {
+                LocationListView(location: $service.currentLocation)
             }
         }
     }

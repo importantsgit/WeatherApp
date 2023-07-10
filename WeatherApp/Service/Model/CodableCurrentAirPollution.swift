@@ -8,11 +8,11 @@
 import Foundation
 
 struct CodableCurrentAirPollution: Codable {
-    let list: [List]
+    let list: [AirPollutionList]
 }
 
 // MARK: - List
-struct List: Codable {
+struct AirPollutionList: Codable {
     let dt: Int
     let main: Main
 }
