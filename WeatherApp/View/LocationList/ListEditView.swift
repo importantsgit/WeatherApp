@@ -9,12 +9,14 @@ import SwiftUI
 
 struct ListEditView: View {
     @ObservedObject var service: DetailListService
+    @EnvironmentObject var manager: CoreDataManager
     @State private var title = ""
     @State private var phoneNumber = ""
     @State private var address = ""
     @State private var description = ""
     @State private var tag = ""
     @State private var showInputAlert = false
+    @State private var showMapView = false
     
     @Environment(\.dismiss) var dismiss
     
@@ -48,6 +50,13 @@ struct ListEditView: View {
                         .keyboardType(.numberPad)
                         .focused($focusedField, equals: .phoneNumber)
                     
+                    Button("위치 선택") {
+                        showMapView = true
+                    }
+                    .fullScreenCover(isPresented: $showMapView) {
+                        MapView()
+                    }
+                    
                     TextField("주소를 입력하세요", text: $address)
                         .submitLabel(.next)
                         .focused($focusedField, equals: .address)
@@ -75,6 +84,10 @@ struct ListEditView: View {
                     .onSubmit {
                         hideKeyBoard()
                     }
+                
+                TextField("전화번호를 입력하세요 (- 제외)", text: $phoneNumber)
+                    .keyboardType(.numberPad)
+                    .focused($focusedField, equals: .phoneNumber)
             }
             .autocorrectionDisabled(true)
             .onAppear {
@@ -116,7 +129,8 @@ struct ListEditView: View {
                         
                         Button {
                             if phoneNumber.count == 11 {
-                                let place = PlaceMark(id: UUID(), title: title, phoneNumber: phoneNumber, address: address, placePhoto: Image(systemName: "hand.thumbsup"), description: description, tag: tag)
+                                let place = PlaceMark(placeMark: CodablePlaceMark(title: title, phoneNumber: phoneNumber, address: address, description: description, tag: tag))
+                                manager.addMemo(content: place)
                                 service.placeMark.append(place)
                                 dismiss()
                             } else {

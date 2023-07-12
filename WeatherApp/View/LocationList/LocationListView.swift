@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LocationListView: View {
+    @EnvironmentObject var manager: CoreDataManager
     @ObservedObject var service = DetailListService()
     @State private var keyword = ""
     @State private var pushDetailView = false
@@ -15,7 +16,8 @@ struct LocationListView: View {
     
     @Binding var location: [String?]
     
-    
+    @FetchRequest(sortDescriptors: [SortDescriptor(\PlaceMarkEntity.title, order: .reverse)])
+    var placeList: FetchedResults<PlaceMarkEntity>
     
     private let columns = [GridItem(alignment: .center)]
     
@@ -27,6 +29,9 @@ struct LocationListView: View {
                     .listRowSeparatorTint(.white)
                     .listRowInsets(EdgeInsets())
                     .padding(.leading, 16)
+                    .navigationDestination(isPresented: $pushDetailView) {
+                        DetailView(placeMark: item, location: location)
+                    }
             }
             .onDelete { rows in
                 service.placeMark.remove(atOffsets: rows)
@@ -63,12 +68,14 @@ struct LocationListView: View {
             }
         }
         .onChange(of: keyword) { newValue in
+            if keyword.isEmpty {
+                placeList.nsPredicate = nil // 저장된 전체 메모가 표시
+            } else {
+                placeList.nsPredicate = NSPredicate(format: "content CONTAINS[c] %@", newValue)
+            }
             if newValue.count == 0 {
                 service.placeMark = service.placeMark
             }
-        }
-        .navigationDestination(isPresented: $pushDetailView) {
-            DetailView()
         }
         .navigationDestination(isPresented: $pushListEditView) {
             ListEditView(service: service)
@@ -92,6 +99,7 @@ struct LocationListView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
             LocationListView(service: DetailListService.preview, location: .constant(["강원", "거의"]))
+                .environment(\.managedObjectContext, CoreDataManager.shared.mainContext)
         }
     }
 }

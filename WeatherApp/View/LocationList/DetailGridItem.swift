@@ -49,7 +49,8 @@ struct DetailGridItem: View {
                                     .font(.system(size: 14, weight: .regular))
                                     .frame(width: 50, alignment: .leading)
                                 
-                                Text(format(with: "XXX-XXXX-XXXX", phone: placeMark.phoneNumber))
+                                Text(placeMark.phoneNumber
+                                    .format(with: "XXX-XXXX-XXXX"))
                                     .font(.system(size: 14, weight: .regular))
                             }
                             .foregroundColor(Color(hex: "4D4D4D"))
@@ -71,27 +72,6 @@ struct DetailGridItem: View {
             }
             .frame(height: 100)
         }
-
-
-    }
-    
-    
-    func format(with mask: String, phone: String) -> String {
-        let numbers = phone.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
-        var result = ""
-        var index = numbers.startIndex
-        
-        for ch in mask where index < numbers.endIndex {
-            if ch == "X" {
-                result.append(numbers[index])
-                
-                index = numbers.index(after: index)
-            } else {
-                result.append(ch)
-            }
-
-        }
-        return result
     }
 }
 

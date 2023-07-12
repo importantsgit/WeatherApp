@@ -10,12 +10,14 @@ import SwiftUI
 @main
 struct WeatherApp: App {
     let service = WeatherService()
+    let manager = CoreDataManager.shared
     
     var body: some Scene {
         WindowGroup {
             LaunchScreenView()
                 .preferredColorScheme(.light)
                 .environmentObject(service)
+                .environment(\.managedObjectContext, manager.mainContext)
         }
     }
 }
