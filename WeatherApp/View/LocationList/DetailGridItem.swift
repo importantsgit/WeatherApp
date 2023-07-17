@@ -49,7 +49,7 @@ struct DetailGridItem: View {
                                     .font(.system(size: 14, weight: .regular))
                                     .frame(width: 50, alignment: .leading)
                                 
-                                Text(placeMark.phoneNumber
+                                Text(placeMark.phoneNumber ?? ""
                                     .format(with: "XXX-XXXX-XXXX"))
                                     .font(.system(size: 14, weight: .regular))
                             }
@@ -60,7 +60,7 @@ struct DetailGridItem: View {
                                     .font(.system(size: 14, weight: .regular))
                                     .frame(width: 50, alignment: .leading)
                                 
-                                Text(placeMark.address)
+                                Text(placeMark.address ?? "")
                                     .font(.system(size: 14, weight: .regular))
                                     .lineLimit(1)
                                     .frame(width: 160, alignment: .leading)

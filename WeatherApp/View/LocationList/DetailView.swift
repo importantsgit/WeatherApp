@@ -60,7 +60,7 @@ struct DetailView: View {
                             }
 
                             
-                            Text(placeMark.description)
+                            Text(placeMark.description ?? "")
                                 .font(.system(size: 14, weight: .regular))
                                 
                         }
@@ -69,12 +69,12 @@ struct DetailView: View {
                             .padding([.top,.bottom], 24)
                         
                         VStack(alignment: .leading, spacing: 16) {
-                            Label(placeMark.phoneNumber
+                            Label(placeMark.phoneNumber ?? ""
                                 .format(with: "XXX-XXXX-XXXX"), systemImage: "phone")
                             
                                 .font(.system(size: 13, weight: .regular))
                             
-                            Label(placeMark.address, systemImage: "location")
+                            Label(placeMark.address ?? "", systemImage: "location")
                                 .font(.system(size: 13, weight: .regular))
                         }
                     }

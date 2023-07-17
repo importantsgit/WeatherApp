@@ -22,144 +22,98 @@ struct ListEditView: View {
     
     enum FieldType: Int, Hashable {
         case title = 0
-        case phoneNumber = 1
-        case address = 2
-        case description = 3
-        case tag = 4
     }
     
     @FocusState private var focusedField: FieldType?
     
     var body: some View {
-        NavigationStack {
-            
-            Form {
-                Section {
-                    TextField("제목을 입력하세요", text: $title)
-                        .focused($focusedField, equals: .title)
-                        .submitLabel(.next)
-                        .onSubmit {
-                            focusedField = .phoneNumber
-                        }
-                } header: {
-                    Text("제목")
-                }
-                
-                Section {
-                    TextField("전화번호를 입력하세요 (- 제외)", text: $phoneNumber)
-                        .keyboardType(.numberPad)
-                        .focused($focusedField, equals: .phoneNumber)
-                    
-                    Button("위치 선택") {
-                        showMapView = true
-                    }
-                    .fullScreenCover(isPresented: $showMapView) {
-                        MapView()
-                    }
-                    
-                    TextField("주소를 입력하세요", text: $address)
-                        .submitLabel(.next)
-                        .focused($focusedField, equals: .address)
-                        .onSubmit {
-                            focusedField = .description
-                        }
-                } header: {
-                    Text("상세정보")
-                }
+        Form {
+            Section {
+                TextField("제목을 입력하세요", text: $title)
+                    .focused($focusedField, equals: .title)
 
-                Section {
-                    TextEditor(text: $description)
-                        .focused($focusedField, equals: .description)
-                        .frame(height: 200)
-                        .onSubmit {
-                            focusedField = .tag
-                        }
-                } header: {
-                    Text("설명을 입력하세요")
-                }
-                
-                TextField("태그", text: $tag)
-                    .submitLabel(.done)
-                    .focused($focusedField, equals: .tag)
-                    .onSubmit {
-                        hideKeyBoard()
-                    }
-                
+            } header: {
+                Text("제목")
+            }
+            
+            Section {
                 TextField("전화번호를 입력하세요 (- 제외)", text: $phoneNumber)
                     .keyboardType(.numberPad)
-                    .focused($focusedField, equals: .phoneNumber)
-            }
-            .autocorrectionDisabled(true)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    focusedField = .title
+                
+                NavigationLink {
+                    DetailMapView(address: $address)
+                } label: {
+                    Text(address == "" ? "위치 선택" : address)
                 }
+            } header: {
+                Text("상세정보 (선택사항)")
             }
-            .navigationTitle("새로운 장소 생성")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    if focusedField == .description {
-                        Button("next") {
-                            focusedField = .tag
-                        }
-                    } else if focusedField == .phoneNumber {
-                        Button("next") {
-                            focusedField = .address
-                        }
-                    }
-                    Button("done") {
-                        hideKeyBoard()
-                    }
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .bottomBar) {
-                    HStack {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Text("뒤로가기")
-                                .font(.system(size: 16, weight: .medium))
-                                .frame(width: 132, height: 32)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Color.secondary)
-                        
-                        Button {
-                            if phoneNumber.count == 11 {
-                                let place = PlaceMark(placeMark: CodablePlaceMark(title: title, phoneNumber: phoneNumber, address: address, description: description, tag: tag))
-                                manager.addMemo(content: place)
-                                service.placeMark.append(place)
-                                dismiss()
-                            } else {
-                                showInputAlert = true
-                            }
 
-                        } label: {
-                            Text("추가하기")
-                                .font(.system(size: 16, weight: .medium))
-                                .frame(width: 132, height: 32)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .tint(Color.black)
-                        .alert("경고", isPresented: $showInputAlert) {
-                            Button {
-                                focusedField = .phoneNumber
-                            } label: {
-                                Text("전화번호 다시 입력하기")
-                            }
-                        } message: {
-                            Text("전화번호를 11자리로 입력해주세요")
-                        }
-                    }
-                    
+            Section {
+                TextEditor(text: $description)
+                    .frame(height: 200)
+            } header: {
+                Text("설명을 입력하세요")
+            }
+            
+            TextField("태그", text: $tag)
+                .submitLabel(.done)
+        }
+        .autocorrectionDisabled(true)
+        .navigationTitle("새로운 장소 생성")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                
+                Button("done") {
+                    hideKeyBoard()
                 }
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("뒤로가기")
+                            .font(.system(size: 16, weight: .medium))
+                            .frame(width: 132, height: 32)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color.secondary)
+                    
+                    Button {
+                        if title != "" {
+                            let place = PlaceMark(placeMark: CodablePlaceMark(title: title, phoneNumber: phoneNumber, address: address, description: description, tag: tag))
+                            manager.addPlaceMark(content: place)
+                            service.placeMark.append(place)
+                            dismiss()
+                        } else {
+                            showInputAlert = true
+                        }
 
-
+                    } label: {
+                        Text("추가하기")
+                            .font(.system(size: 16, weight: .medium))
+                            .frame(width: 132, height: 32)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color.black)
+                    .alert("경고", isPresented: $showInputAlert) {
+                        Button {
+                            focusedField = .title
+                        } label: {
+                            Text("제목입력")
+                        }
+                    } message: {
+                        Text("제목을 입력해야 합니다.")
+                    }
+                }
+                
+            }
+        }
     }
 }
 

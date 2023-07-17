@@ -12,12 +12,12 @@ class PlaceMark: Identifiable, ObservableObject {
     let id: UUID
     
     @Published var title: String
-    @Published var phoneNumber: String
-    @Published var address: String
-    @Published var placePhoto: Image
+    @Published var phoneNumber: String?
+    @Published var address: String?
+    @Published var placePhoto: Image?
     
-    @Published var description: String
-    @Published var tag: String
+    @Published var description: String?
+    @Published var tag: String?
     
     init(placeMark: CodablePlaceMark) {
         id = UUID()
@@ -39,8 +39,8 @@ extension PlaceMark {
 
 struct CodablePlaceMark: Codable {
     let title: String
-    let phoneNumber: String
-    let address: String
-    let description: String
-    let tag: String
+    let phoneNumber: String?
+    let address: String?
+    let description: String?
+    let tag: String?
 }

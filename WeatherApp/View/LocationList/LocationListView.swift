@@ -40,8 +40,9 @@ struct LocationListView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity ,alignment: .top)
         .scrollContentBackground(.hidden)
         .safeAreaInset(edge: .bottom) {
-            Button {
-                pushListEditView = true
+            NavigationLink {
+                ListEditView(service: service)
+                    .environmentObject(manager)
             } label: {
                 Image(systemName: "plus")
                     .frame(width: 54, height: 54)
@@ -77,9 +78,6 @@ struct LocationListView: View {
                 service.placeMark = service.placeMark
             }
         }
-        .navigationDestination(isPresented: $pushListEditView) {
-            ListEditView(service: service)
-        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text(location[0] ?? "")
@@ -93,6 +91,7 @@ struct LocationListView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
     }
+
 }
 
 struct LocationListView_Previews: PreviewProvider {
