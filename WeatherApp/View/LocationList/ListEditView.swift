@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ListEditView: View {
-    @ObservedObject var service: DetailListService
     @EnvironmentObject var manager: CoreDataManager
     @State private var title = ""
     @State private var phoneNumber = ""
@@ -17,6 +16,8 @@ struct ListEditView: View {
     @State private var tag = ""
     @State private var showInputAlert = false
     @State private var showMapView = false
+    
+    var placeMark: PlaceMarkEntity? = nil
     
     @Environment(\.dismiss) var dismiss
     
@@ -59,6 +60,15 @@ struct ListEditView: View {
             TextField("태그", text: $tag)
                 .submitLabel(.done)
         }
+        .onAppear {
+            if let placeMark = placeMark {
+                title = placeMark.title ?? ""
+                phoneNumber = String(placeMark.phoneNumber)
+                description = placeMark.body ?? ""
+                tag = placeMark.tag ?? ""
+                address = placeMark.address ?? ""
+            }
+        }
         .autocorrectionDisabled(true)
         .navigationTitle("새로운 장소 생성")
         .navigationBarTitleDisplayMode(.inline)
@@ -85,10 +95,15 @@ struct ListEditView: View {
                     .tint(Color.secondary)
                     
                     Button {
+                        let content = PlaceMark(placeMark: CodablePlaceMark(title: title, phoneNumber: phoneNumber, address: address, description: description, tag: tag))
+                        
                         if title != "" {
-                            let place = PlaceMark(placeMark: CodablePlaceMark(title: title, phoneNumber: phoneNumber, address: address, description: description, tag: tag))
-                            manager.addPlaceMark(content: place)
-                            service.placeMark.append(place)
+                            if let placeMark = placeMark { // 원래 있다면 (수정)
+                                manager.update(placeMark: placeMark, content: content)
+                            } else { // 없다면 (수정x)
+                                manager.addPlaceMark(content: content)
+                            }
+                            
                             dismiss()
                         } else {
                             showInputAlert = true
@@ -119,7 +134,7 @@ struct ListEditView: View {
 
 struct ListEditView_Previews: PreviewProvider {
     static var previews: some View {
-        ListEditView(service: DetailListService())
+        ListEditView()
     }
 }
 

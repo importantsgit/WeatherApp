@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailGridItem: View {
-    var placeMark: PlaceMark
+    var placeMark: PlaceMarkEntity
     
     @Binding var PushDetailView: Bool
 
@@ -39,7 +39,7 @@ struct DetailGridItem: View {
                         
                     VStack(alignment: .leading ,spacing: 8) {
                         
-                        Text(placeMark.title)
+                        Text(placeMark.title ?? "")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.black)
                         
@@ -49,7 +49,7 @@ struct DetailGridItem: View {
                                     .font(.system(size: 14, weight: .regular))
                                     .frame(width: 50, alignment: .leading)
                                 
-                                Text(placeMark.phoneNumber ?? ""
+                                Text(String(placeMark.phoneNumber)
                                     .format(with: "XXX-XXXX-XXXX"))
                                     .font(.system(size: 14, weight: .regular))
                             }
@@ -77,6 +77,6 @@ struct DetailGridItem: View {
 
 struct DetailGridItem_Previews: PreviewProvider {
     static var previews: some View {
-        DetailGridItem(placeMark: PlaceMark.sampleList[0], PushDetailView: .constant(false))
+        DetailGridItem(placeMark: PlaceMarkEntity(context: CoreDataManager.shared.mainContext), PushDetailView: .constant(false))
     }
 }

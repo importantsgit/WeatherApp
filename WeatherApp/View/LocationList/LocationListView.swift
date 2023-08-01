@@ -9,7 +9,6 @@ import SwiftUI
 
 struct LocationListView: View {
     @EnvironmentObject var manager: CoreDataManager
-    @ObservedObject var service = DetailListService()
     @State private var keyword = ""
     @State private var pushDetailView = false
     @State private var pushListEditView = false
@@ -21,9 +20,16 @@ struct LocationListView: View {
     
     private let columns = [GridItem(alignment: .center)]
     
+    func delete(set: IndexSet) {
+        for index in set {
+            manager.delete(placeMark: placeList[index])
+        }
+    }
+    
     var body: some View {
         List {
-            ForEach(service.placeMark) { item in
+            ForEach(placeList) { item in
+                let item = PlaceMarkEntity()
                 DetailGridItem(placeMark: item, PushDetailView: $pushDetailView)
                     .listRowBackground(Color("backgroundColor"))
                     .listRowSeparatorTint(.white)
@@ -31,18 +37,16 @@ struct LocationListView: View {
                     .padding(.leading, 16)
                     .navigationDestination(isPresented: $pushDetailView) {
                         DetailView(placeMark: item, location: location)
+                            .environmentObject(manager)
                     }
             }
-            .onDelete { rows in
-                service.placeMark.remove(atOffsets: rows)
-            }
+            .onDelete(perform: delete)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity ,alignment: .top)
         .scrollContentBackground(.hidden)
         .safeAreaInset(edge: .bottom) {
             NavigationLink {
-                ListEditView(service: service)
-                    .environmentObject(manager)
+                ListEditView()
             } label: {
                 Image(systemName: "plus")
                     .frame(width: 54, height: 54)
@@ -56,26 +60,12 @@ struct LocationListView: View {
             Color("backgroundColor")
                 .ignoresSafeArea()
         }
-        .searchable(text: $keyword, placement: .navigationBarDrawer, prompt: "찾으시는 제목을 입력하세요") {
-            
-        }
-        .onSubmit(of: .search) {
-            if keyword.count > 0 {
-                service.placeMark = service.placeMark.filter {
-                    $0.title.contains(keyword)
-                }
-            } else {
-                service.placeMark = service.placeMark
-            }
-        }
+        .searchable(text: $keyword, placement: .navigationBarDrawer, prompt: "찾으시는 제목을 입력하세요")
         .onChange(of: keyword) { newValue in
-            if keyword.isEmpty {
+            if keyword.isEmpty || newValue.count == 0 {
                 placeList.nsPredicate = nil // 저장된 전체 메모가 표시
             } else {
                 placeList.nsPredicate = NSPredicate(format: "content CONTAINS[c] %@", newValue)
-            }
-            if newValue.count == 0 {
-                service.placeMark = service.placeMark
             }
         }
         .toolbar {
@@ -97,8 +87,8 @@ struct LocationListView: View {
 struct LocationListView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            LocationListView(service: DetailListService.preview, location: .constant(["강원", "거의"]))
-                .environment(\.managedObjectContext, CoreDataManager.shared.mainContext)
+            LocationListView(location: .constant(["강원", "거의"]))
+                .environmentObject(CoreDataManager.shared)
         }
     }
 }

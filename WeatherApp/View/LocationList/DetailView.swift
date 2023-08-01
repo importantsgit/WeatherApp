@@ -10,7 +10,7 @@ import SwiftUI
 struct DetailView: View {
     @State private var showMenuDialog = false
     
-    var placeMark: PlaceMark
+    var placeMark: PlaceMarkEntity
     var location: [String?]
     
     let gradient = LinearGradient(
@@ -46,7 +46,7 @@ struct DetailView: View {
                         
                         VStack(spacing: 24) {
                             VStack(spacing: 8) {
-                                Text(placeMark.title)
+                                Text(placeMark.title ?? "")
                                     .font(.system(size: 32, weight: .medium))
                                     .frame(maxWidth: .infinity)
                                 
@@ -60,7 +60,7 @@ struct DetailView: View {
                             }
 
                             
-                            Text(placeMark.description ?? "")
+                            Text(placeMark.description)
                                 .font(.system(size: 14, weight: .regular))
                                 
                         }
@@ -69,7 +69,7 @@ struct DetailView: View {
                             .padding([.top,.bottom], 24)
                         
                         VStack(alignment: .leading, spacing: 16) {
-                            Label(placeMark.phoneNumber ?? ""
+                            Label(String(placeMark.phoneNumber)
                                 .format(with: "XXX-XXXX-XXXX"), systemImage: "phone")
                             
                                 .font(.system(size: 13, weight: .regular))
@@ -128,7 +128,7 @@ struct DetailView: View {
 struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            DetailView(placeMark: PlaceMark.sampleList[0], location: ["강원","청주"])
+            DetailView(placeMark: PlaceMarkEntity(context: CoreDataManager.shared.mainContext), location: ["강원","청주"])
         }
     }
 }
