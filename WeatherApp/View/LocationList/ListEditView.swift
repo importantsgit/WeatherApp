@@ -15,9 +15,11 @@ struct ListEditView: View {
     @State private var description = ""
     @State private var tag = ""
     @State private var showInputAlert = false
-    @State private var showMapView = false
     
     var placeMark: PlaceMarkEntity? = nil
+    
+    /**MapView에서 dismiss됐을 때, 다시 onAppear를 호출하는 문제를 해결하기 위한 대책*/
+    @State private var isFirstAppear: Bool = false
     
     @Environment(\.dismiss) var dismiss
     
@@ -61,16 +63,19 @@ struct ListEditView: View {
                 .submitLabel(.done)
         }
         .onAppear {
-            if let placeMark = placeMark {
+            if isFirstAppear == false,
+               let placeMark = placeMark {
                 title = placeMark.title ?? ""
-                phoneNumber = String(placeMark.phoneNumber)
+                phoneNumber = placeMark.phoneNumber ?? ""
                 description = placeMark.body ?? ""
                 tag = placeMark.tag ?? ""
                 address = placeMark.address ?? ""
+                
+                isFirstAppear = true
             }
         }
         .autocorrectionDisabled(true)
-        .navigationTitle("새로운 장소 생성")
+        .navigationTitle(placeMark == nil ? "새로운 장소 생성" : "장소 편집")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .keyboard) {
@@ -95,7 +100,7 @@ struct ListEditView: View {
                     .tint(Color.secondary)
                     
                     Button {
-                        let content = PlaceMark(placeMark: CodablePlaceMark(title: title, phoneNumber: phoneNumber, address: address, description: description, tag: tag))
+                        let content = PlaceMark(title: self.title, phoneNumber: self.phoneNumber, address: self.address, description: self.description, tag: self.tag)
                         
                         if title != "" {
                             if let placeMark = placeMark { // 원래 있다면 (수정)
@@ -110,7 +115,7 @@ struct ListEditView: View {
                         }
 
                     } label: {
-                        Text("추가하기")
+                        Text(placeMark == nil ? "추가하기" : "수정하기")
                             .font(.system(size: 16, weight: .medium))
                             .frame(width: 132, height: 32)
                     }

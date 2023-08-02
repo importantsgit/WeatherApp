@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailGridItem: View {
-    var placeMark: PlaceMarkEntity
+    @ObservedObject var placeMark: PlaceMarkEntity
     
     @Binding var PushDetailView: Bool
 
@@ -17,7 +17,7 @@ struct DetailGridItem: View {
         Button {
             PushDetailView = true
         } label: {
-            VStack(alignment: .leading ,spacing: 36) {
+            VStack(alignment: .leading ,spacing: 24) {
                 HStack(alignment: .center ,spacing: 16) {
                     AsyncImage(url: URL(string: "https://picsum.photos/200/300")!) { image in
                         image
@@ -30,28 +30,26 @@ struct DetailGridItem: View {
                     } placeholder: {
                         ProgressView()
                     }
-//                    placeMark.placePhoto
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fit)
-//                        .frame(width: 78, height: 78)
-//                        .cornerRadius(10)
-//                        .shadow(radius: 4, x: 2, y: 2)
+                    .frame(width: 78, height: 78)
                         
-                    VStack(alignment: .leading ,spacing: 8) {
+                    VStack(alignment: .leading ,spacing: 8) { 
                         
                         Text(placeMark.title ?? "")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.black)
+                            .frame(width: 160, alignment: .leading)
+                            .lineLimit(1)
                         
                         VStack(alignment: .leading ,spacing: 6) {
                             HStack {
                                 Text("전화번호")
                                     .font(.system(size: 14, weight: .regular))
-                                    .frame(width: 50, alignment: .leading)
+                                    .frame(width: 50)
                                 
-                                Text(String(placeMark.phoneNumber)
+                                Text(placeMark.phoneNumber
                                     .format(with: "XXX-XXXX-XXXX"))
                                     .font(.system(size: 14, weight: .regular))
+                                    .frame(width: 160, alignment: .leading)
                             }
                             .foregroundColor(Color(hex: "4D4D4D"))
                             

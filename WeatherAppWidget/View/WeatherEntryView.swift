@@ -64,7 +64,7 @@ struct WeatherEntryView: View {
                             .frame(width: 60, alignment: .leading)
                         
                         Text(entry.widgetData.airPollution)
-                            .font(.system(size: 13, weight: .regular))
+                            .font(.system(size: 10, weight: .regular))
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
 

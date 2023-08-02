@@ -45,10 +45,7 @@ class CoreDataManager: ObservableObject {
         let placeMark = PlaceMarkEntity(context: mainContext)
         placeMark.title = content.title
         placeMark.body = content.description
-        if let phoneNumber = content.phoneNumber {
-            placeMark.phoneNumber = Int16(phoneNumber) ?? 0
-        }
-        
+        placeMark.phoneNumber = content.phoneNumber
         placeMark.address = content.address
         placeMark.tag = content.tag
         // TODO: 이미지 저장
@@ -59,9 +56,7 @@ class CoreDataManager: ObservableObject {
     func update(placeMark: PlaceMarkEntity?, content: PlaceMark) {
         placeMark?.title = content.title
         placeMark?.body = content.description
-        if let phoneNumber = content.phoneNumber {
-            placeMark?.phoneNumber = Int16(phoneNumber) ?? 0
-        }
+        placeMark?.phoneNumber = content.phoneNumber
         placeMark?.address = content.address
         placeMark?.tag = content.tag
         saveContext()

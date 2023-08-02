@@ -26,8 +26,9 @@ extension Double {
 }
 
 
-extension String {
+extension String? {
     func format(with mask: String) -> String {
+        guard let self = self else { return "EmptyString" }
         let numbers = self.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
         var result = ""
         var index = numbers.startIndex

@@ -15,7 +15,7 @@ struct LocationListView: View {
     
     @Binding var location: [String?]
     
-    @FetchRequest(sortDescriptors: [SortDescriptor(\PlaceMarkEntity.title, order: .reverse)])
+    @FetchRequest(sortDescriptors: [SortDescriptor(\PlaceMarkEntity.phoneNumber, order: .reverse)])
     var placeList: FetchedResults<PlaceMarkEntity>
     
     private let columns = [GridItem(alignment: .center)]
@@ -29,21 +29,25 @@ struct LocationListView: View {
     var body: some View {
         List {
             ForEach(placeList) { item in
-                let item = PlaceMarkEntity()
-                DetailGridItem(placeMark: item, PushDetailView: $pushDetailView)
-                    .listRowBackground(Color("backgroundColor"))
-                    .listRowSeparatorTint(.white)
-                    .listRowInsets(EdgeInsets())
-                    .padding(.leading, 16)
-                    .navigationDestination(isPresented: $pushDetailView) {
-                        DetailView(placeMark: item, location: location)
-                            .environmentObject(manager)
-                    }
+                NavigationLink(destination: DetailView(placeMark: item, location: location)) {
+                    DetailGridItem(placeMark: item, PushDetailView: $pushDetailView)
+                        .listRowBackground(Color("backgroundColor"))
+                        .listRowSeparatorTint(.white)
+                        .listRowInsets(EdgeInsets())
+                        .padding(.leading, 16)
+                }
+                .listRowBackground(Color("backgroundColor"))
+                .listRowSeparator(Visibility.hidden)
+                .listStyle(PlainListStyle())
             }
             .onDelete(perform: delete)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity ,alignment: .top)
         .scrollContentBackground(.hidden)
+        .background {
+            Color("backgroundColor")
+                .ignoresSafeArea()
+        }
         .safeAreaInset(edge: .bottom) {
             NavigationLink {
                 ListEditView()
@@ -56,16 +60,12 @@ struct LocationListView: View {
                     .shadow(radius: 4)
             }
         }
-        .background {
-            Color("backgroundColor")
-                .ignoresSafeArea()
-        }
         .searchable(text: $keyword, placement: .navigationBarDrawer, prompt: "찾으시는 제목을 입력하세요")
         .onChange(of: keyword) { newValue in
-            if keyword.isEmpty || newValue.count == 0 {
+            if newValue.isEmpty {
                 placeList.nsPredicate = nil // 저장된 전체 메모가 표시
             } else {
-                placeList.nsPredicate = NSPredicate(format: "content CONTAINS[c] %@", newValue)
+                placeList.nsPredicate = NSPredicate(format: "title CONTAINS[c] %@", newValue)
             }
         }
         .toolbar {
@@ -80,8 +80,8 @@ struct LocationListView: View {
                 .tint(.black)
         }
         .navigationBarTitleDisplayMode(.inline)
-    }
 
+    }
 }
 
 struct LocationListView_Previews: PreviewProvider {

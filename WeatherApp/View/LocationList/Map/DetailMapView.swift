@@ -35,15 +35,6 @@ struct DetailMapView: View {
                     .buttonStyle(.borderedProminent)
                     .tint(Color.black)
                 }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        
-                    } label: {
-                        Image(systemName: "back")
-                    }
-
-                }
             }
             .onDisappear {
                 print("timer was invalidated")

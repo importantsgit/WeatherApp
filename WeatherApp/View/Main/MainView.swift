@@ -80,6 +80,7 @@ struct MainView: View {
                 LocationListView(location: $service.currentLocation)
             }
         }
+        .accentColor(Color(hex: "3A3A3A"))
     }
 }
 

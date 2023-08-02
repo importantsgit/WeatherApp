@@ -17,6 +17,7 @@ struct WeatherApp: App {
             LaunchScreenView()
                 .preferredColorScheme(.light)
                 .environmentObject(service)
+                .environmentObject(manager)
                 .environment(\.managedObjectContext, manager.mainContext)
         }
     }
