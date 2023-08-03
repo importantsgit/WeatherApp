@@ -19,9 +19,6 @@ struct LaunchScreenView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 240, height: 128)
-                    .sheet(isPresented: $hasError) {
-                        ErrorView()
-                    }
 
                 if !service.isFetched {
                     ProgressView()
@@ -32,7 +29,8 @@ struct LaunchScreenView: View {
                         }
                 } else if service.lastError != nil && service.isFetched {
                     Button {
-                        hasError = true
+                        service.lastError = nil
+                        service.fetch()
                     } label: {
                         Text("다시 불러오기")
                     }

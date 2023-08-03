@@ -15,8 +15,10 @@ struct LocationListView: View {
     
     @Binding var location: [String?]
     
-    @FetchRequest(sortDescriptors: [SortDescriptor(\PlaceMarkEntity.phoneNumber, order: .reverse)])
+    @FetchRequest(sortDescriptors: [SortDescriptor(\PlaceMarkEntity.title, order: .reverse)])
     var placeList: FetchedResults<PlaceMarkEntity>
+    
+    @State private var sortByDateDesc = true
     
     private let columns = [GridItem(alignment: .center)]
     
@@ -68,16 +70,33 @@ struct LocationListView: View {
                 placeList.nsPredicate = NSPredicate(format: "title CONTAINS[c] %@", newValue)
             }
         }
+        .onChange(of: sortByDateDesc) { desc in
+            if desc {
+                placeList.sortDescriptors = [
+                    SortDescriptor(\.title, order: .reverse)]
+            } else {
+                placeList.sortDescriptors = [
+                    SortDescriptor(\.title, order: .forward)]
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text(location[0] ?? "")
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Color(hex: "3A3A3A"))
             }
-        }
-        .toolbar{
-            EditButton()
-                .tint(.black)
+            
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                Button {
+                    sortByDateDesc.toggle()
+                } label: {
+                    Image(systemName: "arrow.up.arrow.down")
+                        .tint(Color(hex: "3A3A3A"))
+                }
+                
+                EditButton()
+                    .tint(.black)
+            }
         }
         .navigationBarTitleDisplayMode(.inline)
 

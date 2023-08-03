@@ -128,7 +128,7 @@ var body: some View {
     }
     
     func getTag() -> String {
-        return placeMark.tag?.split(separator: ", ").map{"#" + String($0) + " "}.reduce("", {$0+$1}) ?? "no tag"
+        return placeMark.tag?.split(separator: ", ", omittingEmptySubsequences: true).map{"#" + String($0) + " "}.reduce("", {$0+$1}) ?? "no tag"
     }
 }
 

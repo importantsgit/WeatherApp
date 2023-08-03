@@ -59,8 +59,14 @@ struct ListEditView: View {
                 Text("설명을 입력하세요")
             }
             
-            TextField("태그", text: $tag)
-                .submitLabel(.done)
+            Section {
+                TextField("태그 뒤에 , 를 붙여주세요", text: $tag)
+                    .submitLabel(.done)
+            } header: {
+                Text("태그를 입력하세요")
+            }
+            
+
         }
         .onAppear {
             if isFirstAppear == false,
@@ -123,6 +129,7 @@ struct ListEditView: View {
                     .tint(Color.black)
                     .alert("경고", isPresented: $showInputAlert) {
                         Button {
+                            
                             focusedField = .title
                         } label: {
                             Text("제목입력")

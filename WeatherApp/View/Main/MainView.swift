@@ -53,15 +53,6 @@ struct MainView: View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        
-                    } label: {
-                        Image(systemName: "arrow.up.arrow.down")
-                            .tint(Color(hex: "3A3A3A"))
-                    }
-                }
-                
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
                         pushListView = true
                     } label: {
                         Image("Location")

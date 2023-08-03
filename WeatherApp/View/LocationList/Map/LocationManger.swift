@@ -12,6 +12,7 @@ import UIKit
 class LocationManager: NSObject, ObservableObject {
     @Published var mapView: MKMapView = .init()
     @Published var currentPlace: String = ""
+    @Published var isLocationChange: Bool = false
     
     
     private var manager: CLLocationManager = .init()
@@ -63,11 +64,17 @@ class LocationManager: NSObject, ObservableObject {
 
 extension LocationManager: MKMapViewDelegate {
     func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
+        DispatchQueue.main.async {
+            self.isLocationChange = false
+        }
     }
     
     func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         let location: CLLocation = CLLocation(latitude: mapView.centerCoordinate.latitude, longitude: mapView.centerCoordinate.longitude)
         currentPlacemark = location
+        DispatchQueue.main.async {
+            self.isLocationChange = true
+        }
     }
     
     //MARK: 특정 위치로 이동하는 메서드
@@ -96,4 +103,6 @@ extension LocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
     }
+    
+    
 }
