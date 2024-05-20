@@ -29,13 +29,15 @@ struct LaunchScreenView: View {
                         }
                 } else if service.lastError != nil && service.isFetched {
                     Button {
-                        service.lastError = nil
-                        service.fetch()
+                        hasError = true
                     } label: {
                         Text("다시 불러오기")
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(.black)
+                    .sheet(isPresented: $hasError) {
+                        ErrorView()
+                    }
                 } else {
                     MainView()
                 }
