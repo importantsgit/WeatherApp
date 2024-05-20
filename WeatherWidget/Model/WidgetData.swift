@@ -2,7 +2,7 @@
 //  WidgetData.swift
 //  WeatherApp
 //
-//  Created by 이재훈 on 2023/07/07.
+//  Created by 이재훈 on 5/20/24.
 //
 
 import Foundation
@@ -80,5 +80,3 @@ extension WidgetData {
     }
     
 }
-
-// AppGroup을 통해 앱과 위젯이 동일한 공간에 파일 저장할 수 있다.

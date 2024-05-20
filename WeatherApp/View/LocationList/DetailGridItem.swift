@@ -9,28 +9,28 @@ import SwiftUI
 
 struct DetailGridItem: View {
     @ObservedObject var placeMark: PlaceMarkEntity
-    
     @Binding var PushDetailView: Bool
-
+    @State private var image: UIImage? = nil {
+        didSet {
+            print(image)
+        }
+    }
+    @State private var isImageLoading: Bool = true
     
     var body: some View {
         Button {
             PushDetailView = true
         } label: {
             VStack(alignment: .leading ,spacing: 24) {
+                
                 HStack(alignment: .center ,spacing: 16) {
-                    AsyncImage(url: URL(string: "https://picsum.photos/200/300")!) { image in
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 78, height: 78)
-                            .cornerRadius(10)
-                            .shadow(radius: 4, x: 2, y: 2)
-                        
-                    } placeholder: {
-                        ProgressView()
-                    }
-                    .frame(width: 78, height: 78)
+                    
+                    GridImageView(image: $image, isLoading: $isImageLoading)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 78, height: 78)
+                        .cornerRadius(10)
+                        .shadow(radius: 4, x: 2, y: 2)
+                        .frame(width: 78, height: 78)
                         
                     VStack(alignment: .leading ,spacing: 8) { 
                         
@@ -70,11 +70,71 @@ struct DetailGridItem: View {
             }
             .frame(height: 100)
         }
+        .onAppear {
+            guard let urlString = placeMark.imageURL
+            else {
+                print("onAppear: isImageLoading = false")
+                isImageLoading = false
+                return
+            }
+            
+            loadImage(urlString: urlString)
+        }
+    }
+    
+    func loadImage(urlString: String) {
+        guard let url = URL(string: urlString)
+        else {
+            isImageLoading = false
+            return
+        }
+        
+        print("loadImage")
+        
+        Task {
+            do {
+                let image = try await ImageCache.shared.load(url: url as NSURL)
+                
+                await MainActor.run {
+                    isImageLoading = false
+                    self.image = image
+                }
+            }
+            catch {
+                isImageLoading = false
+                print(error.localizedDescription)
+            }
+            
+        }
+        
     }
 }
+
+struct GridImageView: View {
+    @Binding var image: UIImage?
+    @Binding var isLoading: Bool
+    
+    var body: some View {
+        if let image = image {
+            Image(uiImage: image)
+                .resizable()
+                .frame(width: 78, height: 78)
+                .cornerRadius(10)
+                .aspectRatio(contentMode: .fill)
+        }
+        else if isLoading {
+            ProgressView()
+        }
+        else {
+            Color.black
+        }
+    }
+}
+
 
 struct DetailGridItem_Previews: PreviewProvider {
     static var previews: some View {
         DetailGridItem(placeMark: PlaceMarkEntity(context: CoreDataManager.shared.mainContext), PushDetailView: .constant(false))
     }
 }
+

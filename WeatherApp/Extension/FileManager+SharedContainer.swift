@@ -9,6 +9,6 @@ import Foundation
 
 extension FileManager {
     static var sharedContainerURL: URL {
-        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.Cudo.WeatherApp.WeatherAppWidget")!
+        return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.Cudo.Weather.WeatherAppWidget")!
     }
 }

@@ -11,11 +11,15 @@ class Consts {
     static let shared = Consts()
     private init() {}
     
-    let OPEN_WEATHER_API = "Push Your API"
+    let OPEN_WEATHER_API = "05b85b546ef44a9b508aed51de71a4ac"
     
     enum OPEN_WEATHER_URL: String {
         case CURRENT = "https://api.openweathermap.org/data/2.5/weather"
         case FORECAST = "https://api.openweathermap.org/data/2.5/forecast"
         case AIR_POLLUTION = "http://api.openweathermap.org/data/2.5/air_pollution"
+    }
+    
+    enum PHOTO_URL: String {
+        case LIST = "https://picsum.photos/v2/list"
     }
 }

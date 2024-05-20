@@ -1,15 +1,15 @@
 //
-//  WeatherAppWidgetLiveActivity.swift
-//  WeatherAppWidget
+//  WeatherWidgetLiveActivity.swift
+//  WeatherWidget
 //
-//  Created by 이재훈 on 2023/07/07.
+//  Created by 이재훈 on 5/20/24.
 //
 
 import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct WeatherAppWidgetAttributes: ActivityAttributes {
+struct WeatherWidgetAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         var value: Int
@@ -19,9 +19,9 @@ struct WeatherAppWidgetAttributes: ActivityAttributes {
     var name: String
 }
 
-struct WeatherAppWidgetLiveActivity: Widget {
+struct WeatherWidgetLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: WeatherAppWidgetAttributes.self) { context in
+        ActivityConfiguration(for: WeatherWidgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
                 Text("Hello")
@@ -56,22 +56,31 @@ struct WeatherAppWidgetLiveActivity: Widget {
     }
 }
 
-struct WeatherAppWidgetLiveActivity_Previews: PreviewProvider {
-    static let attributes = WeatherAppWidgetAttributes(name: "Me")
-    static let contentState = WeatherAppWidgetAttributes.ContentState(value: 3)
-
-    static var previews: some View {
-        attributes
-            .previewContext(contentState, viewKind: .dynamicIsland(.compact))
-            .previewDisplayName("Island Compact")
-        attributes
-            .previewContext(contentState, viewKind: .dynamicIsland(.expanded))
-            .previewDisplayName("Island Expanded")
-        attributes
-            .previewContext(contentState, viewKind: .dynamicIsland(.minimal))
-            .previewDisplayName("Minimal")
-        attributes
-            .previewContext(contentState, viewKind: .content)
-            .previewDisplayName("Notification")
+extension WeatherWidgetAttributes {
+    fileprivate static var preview: WeatherWidgetAttributes {
+        WeatherWidgetAttributes(name: "Me")
     }
+}
+
+extension WeatherWidgetAttributes.ContentState {
+    fileprivate static var smiley: WeatherWidgetAttributes.ContentState {
+        WeatherWidgetAttributes.ContentState(value: 3)
+    }
+    
+    fileprivate static var starEyes: WeatherWidgetAttributes.ContentState {
+        WeatherWidgetAttributes.ContentState(value: 3)
+    }
+}
+
+//#Preview{
+//    WeatherWidgetAttributes(name: "Me")
+//        .previewContext(WeatherWidgetAttributes.ContentState(value: 3), viewKind: .dynamicIsland(.compact))
+//    
+//}
+
+#Preview("Notification", as: .content, using: WeatherWidgetAttributes.preview) {
+   WeatherWidgetLiveActivity()
+} contentStates: {
+    WeatherWidgetAttributes.ContentState.smiley
+    WeatherWidgetAttributes.ContentState.starEyes
 }

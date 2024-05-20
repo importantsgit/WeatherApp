@@ -29,76 +29,88 @@ struct LocationListView: View {
     }
     
     var body: some View {
-        List {
-            ForEach(placeList) { item in
-                NavigationLink(destination: DetailView(placeMark: item, location: location)) {
-                    DetailGridItem(placeMark: item, PushDetailView: $pushDetailView)
-                        .listRowBackground(Color("backgroundColor"))
-                        .listRowSeparatorTint(.white)
-                        .listRowInsets(EdgeInsets())
-                        .padding(.leading, 16)
+        GeometryReader { geometry in
+            List {
+                ForEach(placeList) { item in
+                    NavigationLink(destination: DetailView(placeMark: item, location: location)) {
+                        DetailGridItem(placeMark: item, PushDetailView: $pushDetailView)
+                            .listRowBackground(Color("backgroundColor"))
+                            .listRowSeparatorTint(.white)
+                            .listRowInsets(EdgeInsets())
+                            .padding(.leading, 16)
+                    }
+                    .listRowBackground(Color("backgroundColor"))
+                    .listRowSeparator(Visibility.hidden)
+                    .listStyle(PlainListStyle())
                 }
-                .listRowBackground(Color("backgroundColor"))
-                .listRowSeparator(Visibility.hidden)
-                .listStyle(PlainListStyle())
+                .onDelete(perform: delete)
             }
-            .onDelete(perform: delete)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity ,alignment: .top)
-        .scrollContentBackground(.hidden)
-        .background {
-            Color("backgroundColor")
-                .ignoresSafeArea()
-        }
-        .safeAreaInset(edge: .bottom) {
-            NavigationLink {
-                ListEditView()
-            } label: {
-                Image(systemName: "plus")
-                    .frame(width: 54, height: 54)
-                    .foregroundColor(.white)
-                    .background(Color(hex: "2B2B2B"))
-                    .clipShape(Circle())
-                    .shadow(radius: 4)
+            .searchable(text: $keyword, placement: .navigationBarDrawer, prompt: "찾으시는 제목을 입력하세요")
+            .frame(width: geometry.size.width, height: geometry.size.height)
+            .scrollContentBackground(.hidden)
+            .background {
+                Color("backgroundColor")
+                    .ignoresSafeArea()
             }
-        }
-        .searchable(text: $keyword, placement: .navigationBarDrawer, prompt: "찾으시는 제목을 입력하세요")
-        .onChange(of: keyword) { newValue in
-            if newValue.isEmpty {
-                placeList.nsPredicate = nil // 저장된 전체 메모가 표시
-            } else {
-                placeList.nsPredicate = NSPredicate(format: "title CONTAINS[c] %@", newValue)
+            .overlay {
+                VStack {
+                    Spacer()
+                    
+                    NavigationLink {
+                        ListEditView()
+                        
+                    } label: {
+                        Image(systemName: "plus")
+                            .frame(width: 54, height: 54)
+                            .foregroundColor(.white)
+                            .background(Color(hex: "2B2B2B"))
+                            .clipShape(Circle())
+                            .shadow(radius: 4)
+                    }
+                    
+                    Spacer()
+                        .frame(height: 30)
+                }
+
             }
-        }
-        .onChange(of: sortByDateDesc) { desc in
-            if desc {
-                placeList.sortDescriptors = [
-                    SortDescriptor(\.title, order: .reverse)]
-            } else {
-                placeList.sortDescriptors = [
-                    SortDescriptor(\.title, order: .forward)]
+            .onChange(of: keyword) { newValue in
+                if newValue.isEmpty {
+                    placeList.nsPredicate = nil // 저장된 전체 메모가 표시
+                } else {
+                    placeList.nsPredicate = NSPredicate(format: "title CONTAINS[c] %@", newValue)
+                }
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(location[0] ?? "")
-                    .font(.system(size: 24, weight: .bold))
-                    .foregroundColor(Color(hex: "3A3A3A"))
+            .onChange(of: sortByDateDesc) { desc in
+                if desc {
+                    placeList.sortDescriptors = [
+                        SortDescriptor(\.title, order: .reverse)]
+                } else {
+                    placeList.sortDescriptors = [
+                        SortDescriptor(\.title, order: .forward)]
+                }
             }
-            
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button {
-                    sortByDateDesc.toggle()
-                } label: {
-                    Image(systemName: "arrow.up.arrow.down")
-                        .tint(Color(hex: "3A3A3A"))
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(location[0] ?? "")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(Color(hex: "3A3A3A"))
                 }
                 
-                EditButton()
-                    .tint(.black)
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button {
+                        sortByDateDesc.toggle()
+                    } label: {
+                        Image(systemName: "arrow.up.arrow.down")
+                            .tint(Color(hex: "3A3A3A"))
+                    }
+                    
+                    EditButton()
+                        .tint(.black)
+                }
             }
+            .navigationBarTitleDisplayMode(.inline)
         }
-        .navigationBarTitleDisplayMode(.inline)
+
 
     }
 }

@@ -15,11 +15,12 @@ struct ListEditView: View {
     @State private var description = ""
     @State private var tag = ""
     @State private var showInputAlert = false
+    @State private var urlString: String? = nil
     
     var placeMark: PlaceMarkEntity? = nil
     
     /**MapView에서 dismiss됐을 때, 다시 onAppear를 호출하는 문제를 해결하기 위한 대책*/
-    @State private var isFirstAppear: Bool = false
+    @State private var isFirstAppear: Bool = true
     
     @Environment(\.dismiss) var dismiss
     
@@ -69,16 +70,41 @@ struct ListEditView: View {
 
         }
         .onAppear {
-            if isFirstAppear == false,
+            print("onAppear")
+            if isFirstAppear,
                let placeMark = placeMark {
+                print("plackMark is existed")
                 title = placeMark.title ?? ""
                 phoneNumber = placeMark.phoneNumber ?? ""
                 description = placeMark.body ?? ""
                 tag = placeMark.tag ?? ""
                 address = placeMark.address ?? ""
+                urlString = placeMark.imageURL ?? ""
                 
-                isFirstAppear = true
+                
             }
+            else if isFirstAppear == true && placeMark == nil {
+                print("isFirstAppear == true && placeMark == nil")
+                Task {
+                    do {
+                        var data: Photos = try await PhotoService.shared.fetch(
+                            type: .LIST,
+                            param: [
+                                "page" : "\(Int.random(in: 1...100))",
+                                "limit" : 1
+                        ])
+                        
+                        self.urlString = data[0].downloadURL
+                        print(urlString)
+                    }
+                    catch {
+                        print(error.localizedDescription)
+                    }
+
+                }
+            }
+            
+            isFirstAppear = false
         }
         .autocorrectionDisabled(true)
         .navigationTitle(placeMark == nil ? "새로운 장소 생성" : "장소 편집")
@@ -106,7 +132,8 @@ struct ListEditView: View {
                     .tint(Color.secondary)
                     
                     Button {
-                        let content = PlaceMark(title: self.title, phoneNumber: self.phoneNumber, address: self.address, description: self.description, tag: self.tag)
+                        print("click: \(urlString)")
+                        let content = PlaceMark(title: self.title, imageURL: urlString, phoneNumber: self.phoneNumber, address: self.address, description: self.description, tag: self.tag)
                         
                         if title != "" {
                             if let placeMark = placeMark { // 원래 있다면 (수정)

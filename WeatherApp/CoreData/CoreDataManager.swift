@@ -44,6 +44,7 @@ class CoreDataManager: ObservableObject {
     func addPlaceMark(content: PlaceMark) {
         let placeMark = PlaceMarkEntity(context: mainContext)
         placeMark.title = content.title
+        placeMark.imageURL = content.imageURL
         placeMark.body = content.description
         placeMark.phoneNumber = content.phoneNumber
         placeMark.address = content.address
@@ -55,6 +56,7 @@ class CoreDataManager: ObservableObject {
     
     func update(placeMark: PlaceMarkEntity?, content: PlaceMark) {
         placeMark?.title = content.title
+        placeMark?.imageURL = content.imageURL
         placeMark?.body = content.description
         placeMark?.phoneNumber = content.phoneNumber
         placeMark?.address = content.address

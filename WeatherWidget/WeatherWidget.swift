@@ -1,14 +1,14 @@
 //
-//  WeatherAppWidget.swift
-//  WeatherAppWidget
+//  WeatherWidget.swift
+//  WeatherWidget
 //
-//  Created by 이재훈 on 2023/07/07.
+//  Created by 이재훈 on 5/20/24.
 //
 
 import WidgetKit
 import SwiftUI
 
-struct WeatherAppWidget: Widget {
+struct WeatherWidget: Widget {
     let kind: String = "WeatherAppWidget"
 
     var body: some WidgetConfiguration {

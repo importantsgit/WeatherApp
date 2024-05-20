@@ -1,14 +1,16 @@
 //
 //  WeatherEntryView.swift
-//  WeatherAppWidgetExtension
+//  WeatherApp
 //
-//  Created by 이재훈 on 2023/07/07.
+//  Created by 이재훈 on 5/20/24.
 //
+
 
 import SwiftUI
 import WidgetKit
 
 struct WeatherEntryView: View {
+    @Environment(\.widgetFamily) var family: WidgetFamily
     var entry: Provider.Entry
     
     var body: some View {
@@ -89,3 +91,4 @@ struct WeatherEntryView_Previews: PreviewProvider {
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
 }
+
